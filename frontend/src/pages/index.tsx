@@ -11,14 +11,9 @@ import { Mail } from 'lucide-react';
 
 type DashboardView = 'LIST' | 'COMPOSE';
 
-const DEFAULT_USER: User = {
-  id: 'demo-user-id',
-  name: 'Oliver Brown',
-  email: 'oliver.brown@domain.io',
-};
-
 export default function Home() {
-  const [user, setUser] = useState<User | null>(DEFAULT_USER);
+  const [user, setUser] = useState<User | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'SCHEDULED' | 'SENT'>('SCHEDULED');
   const [currentView, setCurrentView] = useState<DashboardView>('LIST');
   const [selectedEmail, setSelectedEmail] = useState<EmailJob | null>(null);
@@ -41,6 +36,7 @@ export default function Home() {
         localStorage.removeItem('reachinbox_user');
       }
     }
+    setIsCheckingAuth(false);
 
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -151,6 +147,14 @@ export default function Home() {
     setScheduledCount(0);
     setSentCount(0);
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-50">
+        <div className="w-8 h-8 border-3 border-[#00A843] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
