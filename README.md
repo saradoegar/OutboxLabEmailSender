@@ -151,3 +151,43 @@ Navigate to:
 ```text
 http://localhost:5000/admin/queues
 ```
+
+---
+
+## 📹 5-Minute Demo Video Script & Submission Checklist
+
+### Evaluator GitHub Access:
+For private repository submission, invite the ReachInbox evaluators:
+- **`Mitrajit`**
+- **`Yadav036`**
+
+### Demo Recording Steps (Screen Recording):
+1. **Google OAuth & Dashboard UI (`http://localhost:3000`)**:
+   - Show login with Google account.
+   - Show user avatar, email, and sidebar navigation (`Scheduled` vs `Sent`).
+   - Click "+ Connect Slack" to showcase the live green `Slack Connected (#email-alerts)` badge.
+2. **Compose & Lead Upload (`Compose` button)**:
+   - Click "Compose" to open the rich composer.
+   - Upload `sample_leads.csv` — show auto-detected recipient tags.
+   - Type subject and rich text body (use Bold, Italic, and Bullet lists).
+   - Set Delay (e.g. 2 sec) and Hourly Limit (e.g. 10/hr).
+   - Click **"Send Later"** — show success toast and instant update of `Scheduled` counter.
+3. **BullMQ Live Queue Metrics (`http://localhost:5000/admin/queues`)**:
+   - Open Bull-Board queue dashboard.
+   - Show the newly scheduled job appearing in `Delayed` status with the calculated delay countdown.
+4. **Server Restart Resilience Proof**:
+   - Open backend terminal and stop the server (`Ctrl+C`).
+   - Show that jobs in PostgreSQL remain safe.
+   - Restart the server (`npm run dev`) and show the terminal log:
+     `[Recovery] Scanning database for uncompleted jobs...`
+     `[Recovery] Re-enqueued job ...`
+   - Show the email reaching its target time and sending automatically without cron!
+5. **Rate Limiting & Slack Alert**:
+   - Demonstrate sender hourly rate limit hit.
+   - Show terminal log:
+     `[RateLimit] Limit reached for sender... Rescheduling job to next hour window.`
+     `[Slack Alert Delivered] ⚠️ Hourly Email Limit Reached`
+   - Show job status transitioning to `RESCHEDULED` in database and Elasticsearch.
+6. **Elasticsearch Full-Text Search**:
+   - In the search bar on `http://localhost:3000`, type keywords (e.g. `alex` or subject keyword) to show instant fuzzy search across recipient, subject, and body.
+
