@@ -6,6 +6,14 @@ Designed and implemented following the **Outbox Labs Assignment** specification 
 
 ---
 
+## 🌐 Live Production Deployments
+- **Frontend Web Application (Vercel)**: [https://outbox-lab-email-sender.vercel.app](https://outbox-lab-email-sender.vercel.app)
+- **Backend API & Queue Service (Render)**: [https://reachinbox-scheduler-backend-jddz.onrender.com](https://reachinbox-scheduler-backend-jddz.onrender.com)
+- **Bull-Board Queue Monitoring Dashboard**: [https://reachinbox-scheduler-backend-jddz.onrender.com/admin/queues](https://reachinbox-scheduler-backend-jddz.onrender.com/admin/queues)
+- **Backend Health Check**: [https://reachinbox-scheduler-backend-jddz.onrender.com/health](https://reachinbox-scheduler-backend-jddz.onrender.com/health)
+
+---
+
 ## 🏗️ Architecture & Core Components
 
 ```text
