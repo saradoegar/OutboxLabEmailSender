@@ -51,7 +51,14 @@ export async function startSlackOAuthHandler(req: Request, res: Response): Promi
       return;
     }
 
-    res.redirect(`${frontendUrl}?slack=connected`);
+    const redirectTarget =
+      (req.query.redirectUrl as string) ||
+      (req.headers.referer ? new URL(req.headers.referer).origin : '') ||
+      (process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost') ? process.env.FRONTEND_URL : '') ||
+      'https://outbox-lab-email-sender.vercel.app';
+
+    const cleanBase = redirectTarget.split('?')[0].replace(/\/$/, '');
+    res.redirect(`${cleanBase}?slack=connected`);
     return;
   }
 

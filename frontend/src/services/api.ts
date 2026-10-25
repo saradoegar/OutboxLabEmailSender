@@ -1,13 +1,27 @@
 import axios from 'axios';
 import { EmailJob, SchedulePayload, SlackStatus } from '../types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+export const getApiBaseUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_API_URL && !process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://reachinbox-scheduler-backend-jddz.onrender.com';
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+};
 
 export const api = axios.create({
-  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+api.interceptors.request.use((config) => {
+  if (!config.baseURL) {
+    config.baseURL = getApiBaseUrl();
+  }
+  return config;
 });
 
 /**
@@ -81,6 +95,20 @@ export async function getSlackStatus(userId?: string, userEmail?: string): Promi
     connected: res.data.connected,
     channel: res.data.channel,
   };
+}
+
+/**
+ * Trigger Slack OAuth / instant demo connection
+ */
+export async function connectSlack(userId?: string, userEmail?: string): Promise<{ success: boolean; connected: boolean }> {
+  const params = new URLSearchParams();
+  if (userId) params.append('userId', userId);
+  if (userEmail) params.append('userEmail', userEmail);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  const res = await api.get<{ success: boolean; connected: boolean }>(`/api/slack/oauth/start${query}`, {
+    headers: { Accept: 'application/json' },
+  });
+  return res.data;
 }
 
 /**

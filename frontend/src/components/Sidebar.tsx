@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, SlackStatus } from '../types';
 import { Clock, Send, ChevronDown, LogOut, CheckCircle2, ExternalLink } from 'lucide-react';
-import { disconnectSlack } from '../services/api';
+import { disconnectSlack, connectSlack, getApiBaseUrl } from '../services/api';
 
 interface SidebarProps {
   user: User;
@@ -25,11 +25,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const [isConnecting, setIsConnecting] = useState(false);
+  const apiBaseUrl = getApiBaseUrl();
 
-  const handleConnectSlack = () => {
-    const query = `?userId=${encodeURIComponent(user?.id || '')}&userEmail=${encodeURIComponent(user?.email || '')}`;
-    window.location.href = `${apiBaseUrl}/api/slack/oauth/start${query}`;
+  const handleConnectSlack = async () => {
+    setIsConnecting(true);
+    try {
+      // In-page connection without redirecting to localhost
+      await connectSlack(user?.id, user?.email);
+      window.location.reload();
+    } catch {
+      const apiBaseUrl = getApiBaseUrl();
+      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+      const query = `?userId=${encodeURIComponent(user?.id || '')}&userEmail=${encodeURIComponent(user?.email || '')}&redirectUrl=${encodeURIComponent(currentOrigin)}`;
+      window.location.href = `${apiBaseUrl}/api/slack/oauth/start${query}`;
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   const handleDisconnectSlack = async () => {
